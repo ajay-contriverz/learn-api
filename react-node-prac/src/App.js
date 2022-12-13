@@ -9,6 +9,7 @@ import Profile from "./components/Profile";
 import Footer from "./components/Footer";
 import SignUp from "./components/SignUp/SignUp";
 import PrivateComp from "./components/PrivateComp/PrivateComp";
+import Login from "./components/login/Login";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         </Route>
 
         <Route path="/signup" element={<SignUp />}></Route>
+        <Route path="/login" element={<Login />}></Route>
       </Routes>
       <Footer />
     </div>

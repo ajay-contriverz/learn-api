@@ -27,10 +27,10 @@ app.post("/login", async (req, res) => {
     if (user) {
       res.send(user);
     } else {
-      res.send({ result: "Username or Password is wrong" });
+      res.send({ result: "Username or Password is Incorrect" });
     }
   } else {
-    res.send({ result: "Username or Password is missing" });
+    res.send({ result: "Username or Password is required" });
   }
 });
 
