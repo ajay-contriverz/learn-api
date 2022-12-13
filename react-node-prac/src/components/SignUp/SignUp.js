@@ -22,7 +22,7 @@ function SignUp() {
   };
 
   useEffect(() => {
-    const auth = localStorage.getItem("user");
+    const auth = localStorage.getItem("users");
     if (auth) {
       navigate("/");
     }
@@ -80,7 +80,7 @@ function SignUp() {
               We'll never share your email with anyone else.
             </Form.Text>
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Group className="mb-3" controlId="formBasicName">
             <Form.Label>User Name</Form.Label>
             <Form.Control
               type="text"

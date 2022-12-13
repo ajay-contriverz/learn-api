@@ -2,6 +2,7 @@ const express = require("express");
 require("./config");
 const User = require("./models");
 const cors = require("cors");
+const Product = require("./productModels");
 
 const port = 8000;
 const app = express();
@@ -15,6 +16,7 @@ app.get("/", async (req, res) => {
   res.send(result);
 });
 
+//add users
 app.post("/signup", async (req, res) => {
   let user = new User(req.body);
   let result = await user.save();
@@ -32,6 +34,13 @@ app.post("/login", async (req, res) => {
   } else {
     res.send({ result: "Username or Password is required" });
   }
+});
+
+//add products
+app.post("/add-product", async (req, res) => {
+  let product = new Product(req.body);
+  let result = await product.save();
+  res.send(result);
 });
 
 app.listen(port, () => {
