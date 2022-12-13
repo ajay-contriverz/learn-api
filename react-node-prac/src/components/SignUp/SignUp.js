@@ -21,6 +21,13 @@ function SignUp() {
     setData({ ...data, [input.name]: input.value });
   };
 
+  useEffect(() => {
+    const auth = localStorage.getItem("user");
+    if (auth) {
+      navigate("/");
+    }
+  }, []);
+
   //   useEffect(() => {
   //     console.log(userName, email, password);
   //   }, [userName, email, password]);
@@ -33,7 +40,8 @@ function SignUp() {
       console.log(res);
       if (res) {
         setData("");
-        navigate("/login");
+        localStorage.setItem("users", JSON.stringify(res));
+        navigate("/");
       }
     } catch (error) {
       if (
