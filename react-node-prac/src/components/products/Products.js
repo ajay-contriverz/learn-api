@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 
 function Products() {
@@ -7,12 +8,23 @@ function Products() {
     fetchProductList();
   }, []);
 
+  //fetch products list
   const fetchProductList = async () => {
     const response = await fetch("http://localhost:8000/products");
     const res = await response.json();
     console.log(res);
     setProducts(res);
   };
+
+  //delete product
+  const deleteProduct = async (id) => {
+    console.log(id);
+    const response = await axios.delete(`http://localhost:8000/products/${id}`);
+    if (response) {
+      fetchProductList();
+    }
+  };
+
   return (
     <div className="text-center product-list">
       <h2 className="fw-bold">Products</h2>
@@ -23,6 +35,7 @@ function Products() {
           <li>Price</li>
           <li>Brand</li>
           <li>Category</li>
+          <li>Operation</li>
         </ul>
         {products.length > 0 ? (
           products.map((item, index) => (
@@ -32,10 +45,10 @@ function Products() {
               <li>{item.price}</li>
               <li>{item.brand}</li>
               <li>{item.category}</li>
-              {/* <li>
+              <li>
                 <button onClick={() => deleteProduct(item._id)}>Delete</button>
-                <Link to={"/update/"+item._id} >Update </Link>
-              </li> */}
+                {/* <Link to={"/update/"+item._id} >Update </Link> */}
+              </li>
             </ul>
           ))
         ) : (

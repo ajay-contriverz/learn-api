@@ -52,6 +52,12 @@ app.get("/products", async (req, res) => {
   }
 });
 
+//delete api
+app.delete("/products/:id", async (req, res) => {
+  let product = await Product.deleteOne({ _id: req.params.id });
+  res.send(product);
+});
+
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
