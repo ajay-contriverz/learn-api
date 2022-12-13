@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router";
 import "./App.css";
 import Nav from "./components/Nav";
-import Products from "./components/Products";
+import Products from "./components/products/Products";
 import AddProduct from "./components/AddProduct";
 import UpdateProduct from "./components/UpdateProduct";
 import Logout from "./components/Logout";

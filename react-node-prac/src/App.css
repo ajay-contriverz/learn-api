@@ -50,8 +50,26 @@
 .footer {
   position: absolute;
   bottom: 0;
-  color: #551abb;
+  color: #4380f6;
   background-color: rgb(127, 255, 212);
   width: 100%;
   text-align: center;
+}
+
+.product-list {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.product-list ul li {
+  display: inline-block;
+  width: 150px;
+  color: #438cf6;
+  border: 1px solid #4380f5;
+  background-color: aquamarine;
+  padding: 5px;
+}
+
+.product-list ul {
+  margin: 0;
 }
