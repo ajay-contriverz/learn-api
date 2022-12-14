@@ -79,6 +79,17 @@ app.put("/products/:id", async (req, res) => {
   res.send(product);
 });
 
+//using Patch
+// app.patch("/products/:id", async (req, res) => {
+//   let product = await Product.updateOne(
+//     { _id: req.params.id },
+//     {
+//       $set: req.body,
+//     }
+//   );
+//   res.send(product);
+// });
+
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
