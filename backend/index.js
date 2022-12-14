@@ -90,6 +90,23 @@ app.put("/products/:id", async (req, res) => {
 //   res.send(product);
 // });
 
+app.get("/search/:key", async (req, resp) => {
+  let result = await Product.find({
+    $or: [
+      {
+        name: { $regex: req.params.key },
+      },
+      {
+        brand: { $regex: req.params.key },
+      },
+      {
+        category: { $regex: req.params.key },
+      },
+    ],
+  });
+  resp.send(result);
+});
+
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });

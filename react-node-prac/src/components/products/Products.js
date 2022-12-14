@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import InputGroup from "react-bootstrap/InputGroup";
+import Form from "react-bootstrap/Form";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -26,9 +28,34 @@ function Products() {
     }
   };
 
+  //handle search
+  const handleSearch = async (e) => {
+    const key = e.target.value;
+    if (key) {
+      const res = await fetch(`http://localhost:8000/search/${key}`);
+      const result = await res.json();
+      if (result) {
+        console.log(result);
+        setProducts(result);
+      }
+    } else {
+      fetchProductList();
+    }
+  };
+
   return (
     <div className="text-center product-list">
       <h2 className="fw-bold">Products</h2>
+      <div className="d-flex align-items-center justify-content-center">
+        <InputGroup className="mb-3" style={{ width: "40%" }}>
+          <Form.Control
+            placeholder="Search Product"
+            aria-label="Search Product"
+            aria-describedby="basic-addon1"
+            onChange={handleSearch}
+          />
+        </InputGroup>
+      </div>
       <div>
         <ul className="fw-bold">
           <li>S. No.</li>
