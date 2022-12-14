@@ -13,7 +13,11 @@ function Products() {
 
   //fetch products list
   const fetchProductList = async () => {
-    const response = await fetch("http://localhost:8000/products");
+    const response = await fetch("http://localhost:8000/products", {
+      headers: {
+        authorization: ` bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+    });
     const res = await response.json();
     console.log(res);
     setProducts(res);
@@ -22,7 +26,14 @@ function Products() {
   //delete product
   const deleteProduct = async (id) => {
     console.log(id);
-    const response = await axios.delete(`http://localhost:8000/products/${id}`);
+    const response = await axios.delete(
+      `http://localhost:8000/products/${id}`,
+      {
+        headers: {
+          authorization: ` bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+      }
+    );
     if (response) {
       fetchProductList();
     }
@@ -32,7 +43,11 @@ function Products() {
   const handleSearch = async (e) => {
     const key = e.target.value;
     if (key) {
-      const res = await fetch(`http://localhost:8000/search/${key}`);
+      const res = await fetch(`http://localhost:8000/search/${key}`, {
+        headers: {
+          authorization: ` bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+      });
       const result = await res.json();
       if (result) {
         console.log(result);

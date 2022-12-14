@@ -37,8 +37,15 @@ function AddProduct() {
       return false;
     }
     const url = "http://localhost:8000/add-product";
-    const { data: res } = await axios.post(url, data);
+    const { data: res } = await axios.post(url, data, {
+      headers: {
+        authorization: ` bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+    });
     console.log(res);
+    if (res) {
+      navigate("/");
+    }
     // if (res) {
     //   localStorage.setItem("users", JSON.stringify(res));
     //   navigate("/");

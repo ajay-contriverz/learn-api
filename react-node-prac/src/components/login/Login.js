@@ -27,8 +27,10 @@ function Login() {
     const url = "http://localhost:8000/login";
     const { data: res } = await axios.post(url, data);
     console.log(res);
-    if (res) {
-      localStorage.setItem("users", JSON.stringify(res));
+    if (res.auth) {
+      localStorage.setItem("users", JSON.stringify(res.user));
+      localStorage.setItem("token", JSON.stringify(res.auth));
+
       navigate("/");
     }
   };

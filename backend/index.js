@@ -3,12 +3,17 @@ require("./config");
 const User = require("./models");
 const cors = require("cors");
 const Product = require("./productModels");
+const jwt = require("jsonwebtoken");
+const verifyToken = require("./middleware");
 
 const port = 8000;
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(verifyToken);
+
+const jwtKey = "ancbhddgfmgsf";
 
 app.get("/", async (req, res) => {
   // let user = new User(req.body);
@@ -20,14 +25,24 @@ app.get("/", async (req, res) => {
 app.post("/signup", async (req, res) => {
   let user = new User(req.body);
   let result = await user.save();
-  res.send(result);
+  // res.send(result);
+  result = result.toObject();
+  delete result.password;
+  jwt.sign({ result }, jwtKey, { expiresIn: "24h" }, (err, token) => {
+    if (err) res.send({ result: "Something Went Wrong" });
+    res.send({ result, auth: token });
+  });
 });
 
 app.post("/login", async (req, res) => {
   if (req.body.email && req.body.password) {
     let user = await User.findOne(req.body).select("-password");
     if (user) {
-      res.send(user);
+      jwt.sign({ user }, jwtKey, { expiresIn: "24h" }, (err, token) => {
+        if (err) res.send({ result: "Something Went Wrong" });
+        res.send({ user, auth: token });
+      });
+      // res.send(user);
     } else {
       res.send({ result: "Username or Password is Incorrect" });
     }
@@ -37,13 +52,13 @@ app.post("/login", async (req, res) => {
 });
 
 //add products
-app.post("/add-product", async (req, res) => {
+app.post("/add-product", verifyToken, async (req, res) => {
   let product = new Product(req.body);
   let result = await product.save();
   res.send(result);
 });
 
-app.get("/products", async (req, res) => {
+app.get("/products", verifyToken, async (req, res) => {
   let product = await Product.find();
   if (product.length > 0) {
     res.send(product);
@@ -53,13 +68,13 @@ app.get("/products", async (req, res) => {
 });
 
 //delete api
-app.delete("/products/:id", async (req, res) => {
+app.delete("/products/:id", verifyToken, async (req, res) => {
   let product = await Product.deleteOne({ _id: req.params.id });
   res.send(product);
 });
 
 //prefill product api
-app.get("/products/:id", async (req, res) => {
+app.get("/products/:id", verifyToken, async (req, res) => {
   let product = await Product.findOne({ _id: req.params.id });
   if (product) {
     res.send(product);
@@ -69,7 +84,7 @@ app.get("/products/:id", async (req, res) => {
 });
 
 //update product api
-app.put("/products/:id", async (req, res) => {
+app.put("/products/:id", verifyToken, async (req, res) => {
   let product = await Product.updateOne(
     { _id: req.params.id },
     {
@@ -90,7 +105,7 @@ app.put("/products/:id", async (req, res) => {
 //   res.send(product);
 // });
 
-app.get("/search/:key", async (req, resp) => {
+app.get("/search/:key", verifyToken, async (req, resp) => {
   let result = await Product.find({
     $or: [
       {
@@ -106,6 +121,24 @@ app.get("/search/:key", async (req, resp) => {
   });
   resp.send(result);
 });
+
+//middleware for token verification on api
+// function verifyToken(req, res, next) {
+//   let token = req.headers["authorization"];
+//   // console.log(token);
+//   if (token) {
+//     token = token.split(" ")[1];
+//     jwt.verify(token, jwtKey, (err, valid) => {
+//       if (err) {
+//         res.status(401).send({ result: "Unable to authorize: Token Invalid" });
+//       } else {
+//         next();
+//       }
+//     });
+//   } else {
+//     res.status(403).send({ result: "Unable to authorize: Token Missing" });
+//   }
+// }
 
 app.listen(port, () => {
   console.log(`Server running at ${port}`);

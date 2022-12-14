@@ -38,9 +38,10 @@ function SignUp() {
       const url = "http://localhost:8000/signup";
       const { data: res } = await axios.post(url, data);
       console.log(res);
-      if (res) {
+      if (res.auth) {
         setData("");
-        localStorage.setItem("users", JSON.stringify(res));
+        localStorage.setItem("users", JSON.stringify(res.result));
+        localStorage.setItem("token", JSON.stringify(res.auth));
         navigate("/");
       }
     } catch (error) {

@@ -28,7 +28,14 @@ function UpdateProduct() {
   // }, [data]);
 
   const preFillData = async () => {
-    const response = await fetch(`http://localhost:8000/products/${params.id}`);
+    const response = await fetch(
+      `http://localhost:8000/products/${params.id}`,
+      {
+        headers: {
+          authorization: ` bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+      }
+    );
     const res = await response.json();
     console.log(res);
     setData({
@@ -53,7 +60,12 @@ function UpdateProduct() {
     }
     const { data: res } = await axios.put(
       `http://localhost:8000/products/${params.id}`,
-      data
+      data,
+      {
+        headers: {
+          authorization: ` bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+      }
     );
     // console.log(res);
     if (res) {
