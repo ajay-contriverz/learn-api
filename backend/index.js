@@ -58,6 +58,27 @@ app.delete("/products/:id", async (req, res) => {
   res.send(product);
 });
 
+//prefill product api
+app.get("/products/:id", async (req, res) => {
+  let product = await Product.findOne({ _id: req.params.id });
+  if (product) {
+    res.send(product);
+  } else {
+    res.send({ result: "No Product Found" });
+  }
+});
+
+//update product api
+app.put("/products/:id", async (req, res) => {
+  let product = await Product.updateOne(
+    { _id: req.params.id },
+    {
+      $set: req.body,
+    }
+  );
+  res.send(product);
+});
+
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -46,8 +47,8 @@ function Products() {
               <li>{item.brand}</li>
               <li>{item.category}</li>
               <li>
-                <button onClick={() => deleteProduct(item._id)}>Delete</button>
-                {/* <Link to={"/update/"+item._id} >Update </Link> */}
+                <button onClick={() => deleteProduct(item._id)}>Delete</button>{" "}
+                <Link to={`/update/${item._id}`}>Update </Link>
               </li>
             </ul>
           ))
