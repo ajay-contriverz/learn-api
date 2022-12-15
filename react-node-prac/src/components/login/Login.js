@@ -9,6 +9,7 @@ function Login() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,14 +25,27 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const url = "http://localhost:8000/login";
-    const { data: res } = await axios.post(url, data);
-    console.log(res);
-    if (res.auth) {
-      localStorage.setItem("users", JSON.stringify(res.user));
-      localStorage.setItem("token", JSON.stringify(res.auth));
-
-      navigate("/");
+    try {
+      const url = "http://localhost:8000/login";
+      const { data: res } = await axios.post(url, data);
+      console.log(res);
+      if (res.auth) {
+        localStorage.setItem("users", JSON.stringify(res.user));
+        localStorage.setItem("token", JSON.stringify(res.auth));
+        setError("");
+        navigate("/");
+      } else {
+        console.log(res);
+        setError(res.result);
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.status >= 400 &&
+        error.response.status <= 500
+      ) {
+        setError(error.response.data.result);
+      }
     }
   };
 
@@ -69,6 +83,11 @@ function Login() {
                 placeholder="Password"
               />
             </Form.Group>
+            {error ? (
+              <Form.Text className="text-muted">* {error}</Form.Text>
+            ) : (
+              ""
+            )}
             <Form.Group className="mb-3" controlId="formBasicCheckbox">
               <Form.Check type="checkbox" label="Check me out" />
             </Form.Group>

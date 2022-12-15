@@ -5,13 +5,14 @@ const cors = require("cors");
 const Product = require("./productModels");
 const jwt = require("jsonwebtoken");
 const verifyToken = require("./middleware");
+const bcrypt = require("bcrypt");
 
 const port = 8000;
 const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(verifyToken);
+// app.use(verifyToken);
 
 const jwtKey = "ancbhddgfmgsf";
 
@@ -23,7 +24,10 @@ app.get("/", async (req, res) => {
 
 //add users
 app.post("/signup", async (req, res) => {
-  let user = new User(req.body);
+  //converting password to encrypted form using bcrypt
+  const hashPassword = await bcrypt.hash(req.body.password, 10);
+
+  let user = new User({ ...req.body, password: hashPassword });
   let result = await user.save();
   // res.send(result);
   result = result.toObject();
@@ -31,15 +35,28 @@ app.post("/signup", async (req, res) => {
   jwt.sign({ result }, jwtKey, { expiresIn: "24h" }, (err, token) => {
     if (err) res.send({ result: "Something Went Wrong" });
     res.send({ result, auth: token });
+    //res.cookie("jwt", token)
   });
 });
 
 app.post("/login", async (req, res) => {
   if (req.body.email && req.body.password) {
-    let user = await User.findOne(req.body).select("-password");
+    let user = await User.findOne({ email: req.body.email });
+    // console.log(user);
+    // console.log(req.body.email);
+    // console.log(req.body.password);
+
     if (user) {
+      const validPassword = await bcrypt.compare(
+        req.body.password,
+        user.password
+      );
+      // console.log(user.password);
+      if (!validPassword)
+        return res.status(401).send({ result: "Invalid Email or Password" });
       jwt.sign({ user }, jwtKey, { expiresIn: "24h" }, (err, token) => {
         if (err) res.send({ result: "Something Went Wrong" });
+        //res.cookie("jwt", token)
         res.send({ user, auth: token });
       });
       // res.send(user);
