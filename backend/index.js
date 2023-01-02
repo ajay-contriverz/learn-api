@@ -6,6 +6,7 @@ const Product = require("./productModels");
 const jwt = require("jsonwebtoken");
 const verifyToken = require("./middleware");
 const bcrypt = require("bcrypt");
+const movieRoutes = require("./routes/movies");
 
 const port = 8000;
 const app = express();
@@ -156,6 +157,9 @@ app.get("/search/:key", verifyToken, async (req, resp) => {
 //     res.status(403).send({ result: "Unable to authorize: Token Missing" });
 //   }
 // }
+
+//Routes
+app.use("/api", movieRoutes);
 
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
