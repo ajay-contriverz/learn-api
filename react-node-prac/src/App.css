@@ -73,3 +73,52 @@
 .product-list ul {
   margin: 0;
 }
+
+/* .wrapper {
+	width: 100%;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+} */
+
+.container {
+	width: 100%;
+  /* height: auto; */
+	border-radius: 10px;
+	box-shadow: var(--box-shadow);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background-color: rgb(183, 241, 235);
+}
+
+.head {
+	display: flex;
+	align-content: center;
+	height: 80px;
+  width: auto;
+	border-radius: 10px;
+	background-color: rgb(69, 59, 158);
+	justify-content: space-between;
+}
+
+.logo {
+	width: 100px;
+	object-fit: contain;
+	margin-left: 15px;
+}
+
+.body {
+	height: 500px;
+	display: flex;
+}
+
+.table_container {
+	flex: 3;
+	position: relative;
+}
+
+.filter_container {
+	flex: 1;
+}

@@ -24,7 +24,7 @@ export default function Nav() {
             <Link to="/update">Update Product</Link>
           </li> */}
           <li>
-            <Link to="/profile">Profile</Link>
+            <Link to="/movies">Movies</Link>
           </li>
           <li>
             <Link onClick={logout} to="/signup">
