@@ -8,6 +8,14 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
   const server = "http://localhost:8000";
 
+  useEffect(() => {
+    const currentUser = localStorage.getItem("userData");
+    // console.log(currentUser);
+    if (currentUser) {
+      return navigate("dashboard");
+    }
+  }, []);
+
   const emailHandler = (e: any) => {
     setEmail(e.target.value);
   };
@@ -27,11 +35,18 @@ export default function Login() {
     };
     fetch(`${server}/login`, requestOption)
       .then((res) => res.json())
-      .then((json) => {
-        if (json.result) {
-          setErrorMsg(json.result);
+      .then((user) => {
+        if (user.result) {
+          setErrorMsg(user.result);
         }
-        if (!json.result) {
+        if (user.auth) {
+          // const currentUser: any = [
+          //   {
+          //     auth: user.auth,
+          //     userId: user._id,
+          //   },
+          // ];
+          localStorage.setItem("userData", user.auth);
           return navigate("dashboard");
         }
       });
