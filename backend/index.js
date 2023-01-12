@@ -62,10 +62,10 @@ app.post("/login", async (req, res) => {
       });
       // res.send(user);
     } else {
-      res.send({ result: "Username or Password is Incorrect" });
+      res.send({ result: "Email or Password is Incorrect" });
     }
   } else {
-    res.send({ result: "Username or Password is required" });
+    res.send({ result: "Email or Password is required" });
   }
 });
 

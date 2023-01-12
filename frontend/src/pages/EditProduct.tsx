@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import Alert from "../components/Alert";
 
 export default function EditProduct() {
   const navigate = useNavigate();
@@ -9,19 +10,36 @@ export default function EditProduct() {
       price: "",
       brand: "",
       category: "",
+      userId: "",
     },
   ]);
+  const [alert, setAlert] = useState({
+    show: false,
+    type: "",
+    message: "",
+  });
   const location = useLocation();
   const path = location.pathname.split("/");
   const finalPath = path[path.length - 1];
 
-  const currentUser = localStorage.getItem("userData");
+  const getUserFromStorage: any = localStorage.getItem("userData");
+  const finalUser = JSON.parse(getUserFromStorage);
+  const currentUser = finalUser.auth;
   const server = "http://localhost:8000";
 
   const inputHandler = (event: any) => {
     const name = event.target.name;
     const value = event.target.value;
-    setProductInfo((values: any) => ({ ...values, [name]: value }));
+    setAlert({
+      show: false,
+      type: "",
+      message: "",
+    });
+    setProductInfo((values: any) => ({
+      ...values,
+      [name]: value,
+      userId: finalUser.userId,
+    }));
   };
 
   const product = async () => {
@@ -44,28 +62,42 @@ export default function EditProduct() {
 
   const submitEditProduct = (e: any) => {
     e.preventDefault();
-    const resOption = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: "Bearer " + currentUser,
-      },
-      body: JSON.stringify(productInfo),
-    };
-    fetch(`${server}/products/${finalPath}`, resOption)
-      .then((res) => {
-        if (res.status == 200) {
-          return navigate("/dashboard");
-        } else {
-          console.log(res.status);
-        }
-      })
-      .catch((err) => {
-        console.log("Error:", err);
+    if (
+      productInfo.name.length < 1 ||
+      productInfo.price.length < 1 ||
+      productInfo.brand.length < 1 ||
+      productInfo.category.length < 1
+    ) {
+      setAlert({
+        show: true,
+        type: "danger",
+        message: "All fields are mandatory!",
       });
+    } else {
+      const resOption = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + currentUser,
+        },
+        body: JSON.stringify(productInfo),
+      };
+      fetch(`${server}/products/${finalPath}`, resOption)
+        .then((res) => {
+          if (res.status == 200) {
+            return navigate("/dashboard");
+          } else {
+            console.log(res.status);
+          }
+        })
+        .catch((err) => {
+          console.log("Error:", err);
+        });
+    }
   };
   return (
-    <section className="d-flex align-items-center justify-content-center vh-100 bg-gradient-info">
+    <section className="position-relative d-flex align-items-center justify-content-center vh-100 bg-gradient-info">
+      {alert.show && <Alert type={alert.type} message={alert.message} />}
       <div className="container">
         <div className="row justify-content-center">
           <form className="col-5" onSubmit={submitEditProduct}>
@@ -77,7 +109,7 @@ export default function EditProduct() {
                   onChange={inputHandler}
                   className="form-control"
                   autoComplete="off"
-                  defaultValue={productInfo.name && productInfo.name}
+                  value={productInfo.name ? productInfo.name : ""}
                   name="name"
                   type="text"
                   placeholder="Enter here"
@@ -88,7 +120,7 @@ export default function EditProduct() {
                 <input
                   onChange={inputHandler}
                   className="form-control"
-                  defaultValue={productInfo.price && productInfo.price}
+                  value={productInfo.price ? productInfo.price : ""}
                   name="price"
                   type="number"
                   placeholder="Enter here"
@@ -100,7 +132,7 @@ export default function EditProduct() {
                   className="form-control"
                   name="brand"
                   onChange={inputHandler}
-                  defaultValue={productInfo.brand && productInfo.brand}
+                  value={productInfo.brand ? productInfo.brand : ""}
                   type="text"
                   placeholder="Enter here"
                 />
@@ -111,7 +143,7 @@ export default function EditProduct() {
                   className="form-control"
                   name="category"
                   onChange={inputHandler}
-                  defaultValue={productInfo.category && productInfo.category}
+                  value={productInfo.category ? productInfo.category : ""}
                   type="text"
                   placeholder="Enter here"
                 />

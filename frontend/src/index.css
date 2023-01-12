@@ -14,3 +14,8 @@ code {
 .bg-gradient-info {
   background-color: rgb(241, 241, 241);
 }
+.topAlert {
+  top: 15px;
+  right: 15px;
+  z-index: 1;
+}

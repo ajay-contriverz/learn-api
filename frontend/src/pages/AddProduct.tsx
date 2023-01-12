@@ -1,41 +1,74 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Alert from "../components/Alert";
 
 export default function AddProduct() {
+  const [alert, setAlert] = useState({
+    show: false,
+    type: "",
+    message: "",
+  });
   const navigate = useNavigate();
   const [productInfo, setProductInfo] = useState({});
   const server = "http://localhost:8000";
+
+  const getUserFromStorage: any = localStorage.getItem("userData");
+  const finalUser = JSON.parse(getUserFromStorage);
+  const currentUser = finalUser.auth;
+
   const inputHandler = (event: any) => {
     const name = event.target.name;
     const value = event.target.value;
-    setProductInfo((values) => ({ ...values, [name]: value }));
+    setAlert({
+      show: false,
+      type: "",
+      message: "",
+    });
+    setProductInfo((values) => ({
+      ...values,
+      [name]: value,
+      userId: finalUser.userId,
+    }));
   };
   const submitAddProduct = (e: any) => {
-    const currentUser = localStorage.getItem("userData");
     e.preventDefault();
-    const resOption = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: "Bearer " + currentUser,
-      },
-      body: JSON.stringify(productInfo),
-    };
-    fetch(`${server}/add-product`, resOption)
-      .then((res) => {
-        if (res.status == 200) {
-          return navigate("/dashboard");
-        } else {
-          console.log(res.status);
-        }
-      })
-      .catch((err) => {
-        console.log("Error:", err);
+    if (
+      !productInfo.hasOwnProperty("name") ||
+      !productInfo.hasOwnProperty("price") ||
+      !productInfo.hasOwnProperty("brand") ||
+      !productInfo.hasOwnProperty("category")
+    ) {
+      setAlert({
+        show: true,
+        type: "danger",
+        message: "All fields are mandatory!",
       });
+    } else {
+      const resOption = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + currentUser,
+        },
+        body: JSON.stringify(productInfo),
+      };
+      fetch(`${server}/add-product`, resOption)
+        .then((res) => {
+          if (res.status == 200) {
+            return navigate("/dashboard");
+          } else {
+            console.log(res.status);
+          }
+        })
+        .catch((err) => {
+          console.log("Error:", err);
+        });
+    }
   };
 
   return (
-    <section className="d-flex align-items-center justify-content-center vh-100 bg-gradient-info">
+    <section className="position-relative d-flex align-items-center justify-content-center vh-100 bg-gradient-info">
+      {alert.show && <Alert type={alert.type} message={alert.message} />}
       <div className="container">
         <div className="row justify-content-center">
           <form className="col-5" onSubmit={submitAddProduct}>
